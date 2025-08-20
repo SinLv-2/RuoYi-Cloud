@@ -1,0 +1,42 @@
+# Tomcat
+server:
+  port: 9201
+
+# Spring
+spring:
+  application:
+    # 应用名称
+    name: ruoyi-system
+  profiles:
+    # 环境配置
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        # 服务注册地址
+        server-addr: 39.104.81.97:8848
+      config:
+        # 配置中心地址
+        server-addr: 39.104.81.97:8848
+        # 配置文件格式
+        file-extension: yml
+        # 共享配置
+        shared-configs:
+          - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+    sentinel:
+      # 取消控制台懒加载
+      eager: true
+      transport:
+        # 控制台地址，sentinel服务和受限流的服务需要双向联通，所以只能使用本地sentinel，无法使用阿里云
+        dashboard: 127.0.0.1:8858
+      # nacos配置持久化
+      datasource:
+        # 对特定接口限流，无论是从网关调入还是从postman调入都会触发
+        # 项目中启用了 spring-cloud-starter-alibaba-sentinel，这个功能是开箱即用，无需编码
+        controller-ds:
+          nacos:
+            server-addr: 39.104.81.97:8848
+            dataId: sentinel-ruoyi-system
+            groupId: DEFAULT_GROUP
+            data-type: json
+            rule-type: flow
